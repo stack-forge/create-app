@@ -17,18 +17,30 @@ export default function policy (bucketName, tableName, keyId) {
       {
         Sid: '',
         Effect: 'Allow',
-        Action: 'iam:*',
-        Resource: 'arn:aws:iam::*:user/stackforge_*'
+        Action: [
+          "iam:AttachUserPolicy",
+          "iam:ListAttachedUserPolicies",
+          "iam:DetachUserPolicy",
+          "iam:GetUser",
+          "iam:GetUserPolicy",
+          "iam:ListUserPolicies",
+          "iam:ListUserTags",
+          "iam:ListUsers"
+        ],
+        Resource: 'arn:aws:iam::*:user/*'
       },
       {
         Sid: '',
         Effect: 'Allow',
         Action: [
-          'iam:ListPolicyVersions',
-          'iam:GetPolicyVersion',
-          'iam:GetPolicy',
-          'iam:DeletePolicyVersion',
-          'iam:CreatePolicyVersion'
+          "iam:CreatePolicy",
+          "iam:CreatePolicyVersion",
+          "iam:DeletePolicy",
+          "iam:DeletePolicyVersion",
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion",
+          "iam:ListPolicies",
+          "iam:ListPolicyVersions"
         ],
         Resource: 'arn:aws:iam::*:policy/stackforge_*'
       },

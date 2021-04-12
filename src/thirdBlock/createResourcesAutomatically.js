@@ -95,8 +95,13 @@ export default async function createResourcesAutomatically (
   const userName = `${project}_stackforge_user`
   await new aws.IAM()
     .createUser({
+      UserName: userName
+    })
+    .promise()
+  await new aws.IAM()
+    .attachUserPolicy({
       UserName: userName,
-      PermissionsBoundary: policyArn
+      PolicyArn: policyArn
     })
     .promise()
   console.log()
