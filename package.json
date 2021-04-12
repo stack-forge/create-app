@@ -1,0 +1,48 @@
+{
+  "name": "@stack-forge/create-app",
+  "version": "1.0.0",
+  "description": "A CLI to bootstrap Stackforge apps",
+  "main": "src/index.js",
+  "bin": {
+    "@stack-forge/create-app": "bin/create-app"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC",
+  "keywords": [
+    "cli",
+    "stackforge",
+    "stack-forge",
+    "create-app"
+  ],
+  "dependencies": {
+    "arg": "^5.0.0",
+    "aws-sdk": "^2.884.0",
+    "chalk": "^4.1.0",
+    "esm": "^3.2.25",
+    "execa": "^5.0.0",
+    "fs-extra": "^9.1.0",
+    "inquirer": "^8.0.0",
+    "is-valid-domain": "0.0.19",
+    "js-yaml": "^4.0.0",
+    "project-name-generator": "^2.1.9"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "prettier-standard": "^16.4.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/*": "prettier-standard"
+  }
+}
