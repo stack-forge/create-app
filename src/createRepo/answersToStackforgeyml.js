@@ -40,7 +40,7 @@ export default function answersToStackforge (answers) {
           'hosted_zone',
           'state_bucket',
           'lock_table',
-          'key_id'
+          'encryption_key_id'
         ])
       ),
       ...(arp !== undefined && arp === false ? { manage_ci_user: false } : {})

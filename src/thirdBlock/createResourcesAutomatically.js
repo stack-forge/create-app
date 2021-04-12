@@ -133,6 +133,6 @@ export default async function createResourcesAutomatically (
     create_resources_automatically: true,
     state_bucket: bucketName,
     lock_table: createLockTable ? tableName : undefined,
-    key_id: createKmsKey ? keyId : undefined
+    encryption_key_id: createKmsKey ? keyId : undefined
   }
 }

@@ -21,7 +21,7 @@ export default async function inputResourcesManually () {
     },
     {
       type: 'input',
-      name: 'key_id',
+      name: 'encryption_key_id',
       message: `Enter the KMS key id ${chalk.italic(
         '(recommended but optional)'
       )}`,
