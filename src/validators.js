@@ -1,7 +1,7 @@
 const s3BucketRegex = /(?=^.{3,63}$)(?!^(\d+\.)+\d+$)(^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$)/
 
 export const isValidProject = s =>
-  /^[a-z][\w\d-]{1,23}$/.test(s) && s3BucketRegex.test(s)
+  /^[a-z][\w\d-]{1,50}$/.test(s) && s3BucketRegex.test(s)
     ? true
     : 'Invalid project name: characters, numbers and - allowed (no double dashes or end in dash)'
 
