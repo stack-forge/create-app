@@ -28,5 +28,9 @@ export default async function secondBlock ({ provider }) {
     }
   ])
 
+  console.log()
+  console.log("===========================")
+  console.log()
+
   return secondBlockAnswers
 }

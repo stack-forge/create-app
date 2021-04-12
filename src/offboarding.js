@@ -3,7 +3,7 @@ import chalk from 'chalk'
 
 export default async function offboarding ({
   project,
-  create_resources_automatically = true
+  create_resources_automatically
 }) {
   console.log(
     chalk.bold.green("You're almost done!"),
@@ -38,10 +38,14 @@ export default async function offboarding ({
   ])
 
   console.log()
+  console.log("===========================")
+  console.log()
   console.log(chalk.bold.green("🎉 You're done!"))
   console.log()
   console.log(
-    chalk.bold(`You can find the bootstrapped source code at ${project}. Hit`),
+    chalk.bold('You can find the bootstrapped source code at'),
+    chalk.bold.green(`${project}.`),
+    chalk.bold('Hit'),
     chalk.bold.green('git push'),
     chalk.bold(`to see the app live in production!`)
   )

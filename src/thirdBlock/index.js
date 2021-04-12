@@ -8,7 +8,6 @@ export default async function thirdBlock (
   firstBlockAnswers,
   secondBlockAnswers
 ) {
-  console.log()
   console.log(
     chalk.bold.green("You're halfway there!"),
     chalk.bold("Let's create the resources now")

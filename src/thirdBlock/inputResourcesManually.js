@@ -36,5 +36,9 @@ export default async function inputResourcesManually () {
     }
   ])
 
+  console.log()
+  console.log("===========================")
+  console.log()
+
   return thirdBlockAnswers
 }
