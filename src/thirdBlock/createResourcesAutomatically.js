@@ -126,13 +126,13 @@ export default async function createResourcesAutomatically (
   console.log(chalk.bold(`🍡 Access key for user "${userName}" created`))
   console.log(chalk.italic("You'll need them in a sec!"))
   console.log()
-  console.log("===========================")
+  console.log('===========================')
   console.log()
 
   return {
     create_resources_automatically: true,
     state_bucket: bucketName,
-    lock_table: createLockTable && tableName,
-    key_id: createKmsKey && keyId
+    lock_table: createLockTable ? tableName : undefined,
+    key_id: createKmsKey ? keyId : undefined
   }
 }
