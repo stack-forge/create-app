@@ -4,7 +4,7 @@
   "description": "A CLI to bootstrap Stackforge apps",
   "main": "src/index.js",
   "bin": {
-    "@stack-forge/create-app": "bin/create-app"
+    "create-app": "bin/create-app"
   },
   "publishConfig": {
     "access": "public"
@@ -44,5 +44,14 @@
   },
   "lint-staged": {
     "src/*": "prettier-standard"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stack-forge/create-app.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/stack-forge/create-app/issues"
+  },
+  "homepage": "https://github.com/stack-forge/create-app#readme"
 }
