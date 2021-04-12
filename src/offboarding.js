@@ -45,7 +45,7 @@ export default async function offboarding ({
   console.log(
     chalk.bold('You can find the bootstrapped source code at'),
     chalk.bold.green(`${project}.`),
-    chalk.bold('Hit'),
+    chalk.bold('Setup a remote origin on Github and hit'),
     chalk.bold.green('git push'),
     chalk.bold(`to see the app live in production!`)
   )
