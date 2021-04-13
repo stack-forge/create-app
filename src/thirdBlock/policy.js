@@ -56,6 +56,13 @@ export default function policy (bucketName, tableName, keyId) {
         ],
         Resource: '*'
       },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "acm:*"
+        ],
+        "Resource": ["*"]
+      },
       ...(tableName
         ? [
             {

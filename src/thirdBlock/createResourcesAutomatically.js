@@ -8,7 +8,7 @@ import policy from './policy'
 
 export default async function createResourcesAutomatically (
   { project },
-  { region }
+  { region, hosted_zone }
 ) {
   const { createLockTable, createKmsKey } = await inquirer.prompt([
     {
@@ -26,24 +26,24 @@ export default async function createResourcesAutomatically (
 
   const bucketName = `${project}-stackforge-state`
 
-  await new aws.S3().createBucket({ Bucket: bucketName }).promise()
+  // await new aws.S3().createBucket({ Bucket: bucketName }).promise()
   console.log()
   console.log(chalk.bold(`🍡 S3 bucket "${bucketName}" created`))
   console.log()
 
   const tableName = `${project}-stackforge-lock`
   if (createLockTable) {
-    await new aws.DynamoDB({ region })
-      .createTable({
-        TableName: tableName,
-        AttributeDefinitions: [{ AttributeName: 'LockID', AttributeType: 'S' }],
-        KeySchema: [{ AttributeName: 'LockID', KeyType: 'HASH' }],
-        ProvisionedThroughput: {
-          ReadCapacityUnits: 20,
-          WriteCapacityUnits: 20
-        }
-      })
-      .promise()
+    // await new aws.DynamoDB({ region })
+    //   .createTable({
+    //     TableName: tableName,
+    //     AttributeDefinitions: [{ AttributeName: 'LockID', AttributeType: 'S' }],
+    //     KeySchema: [{ AttributeName: 'LockID', KeyType: 'HASH' }],
+    //     ProvisionedThroughput: {
+    //       ReadCapacityUnits: 20,
+    //       WriteCapacityUnits: 20
+    //     }
+    //   })
+    //   .promise()
 
     console.log()
     console.log(chalk.bold('🍡 DynamoDB table created'))
@@ -62,11 +62,11 @@ export default async function createResourcesAutomatically (
 
   let keyId
   if (createKmsKey) {
-    const {
-      KeyMetadata: { KeyId }
-    } = await new aws.KMS({ region }).createKey().promise()
+    // const {
+    //   KeyMetadata: { KeyId }
+    // } = await new aws.KMS({ region }).createKey().promise()
 
-    keyId = KeyId
+    // keyId = KeyId
     console.log()
     console.log(chalk.bold('🍡 KMS key created'))
     console.log(
@@ -80,30 +80,30 @@ export default async function createResourcesAutomatically (
   }
 
   const policyName = `${project}_stackforge_policy`
-  const {
-    Policy: { Arn: policyArn }
-  } = await new aws.IAM()
-    .createPolicy({
-      PolicyName: policyName,
-      PolicyDocument: policy(bucketName, createLockTable && tableName, keyId)
-    })
-    .promise()
+  // const {
+  //   Policy: { Arn: policyArn }
+  // } = await new aws.IAM()
+  //   .createPolicy({
+  //     PolicyName: policyName,
+  //     PolicyDocument: policy(bucketName, createLockTable && tableName, keyId)
+  //   })
+  //   .promise()
   console.log()
   console.log(chalk.bold(`🍡 IAM policy "${policyName}" created`))
   console.log()
 
   const userName = `${project}_stackforge_user`
-  await new aws.IAM()
-    .createUser({
-      UserName: userName
-    })
-    .promise()
-  await new aws.IAM()
-    .attachUserPolicy({
-      UserName: userName,
-      PolicyArn: policyArn
-    })
-    .promise()
+  // await new aws.IAM()
+  //   .createUser({
+  //     UserName: userName
+  //   })
+  //   .promise()
+  // await new aws.IAM()
+  //   .attachUserPolicy({
+  //     UserName: userName,
+  //     PolicyArn: policyArn
+  //   })
+  //   .promise()
   console.log()
   console.log(chalk.bold(`🍡 IAM user "${userName}" created`))
   console.log(
@@ -113,19 +113,90 @@ export default async function createResourcesAutomatically (
   )
   console.log()
 
-  const { AccessKey } = await new aws.IAM()
-    .createAccessKey({
-      UserName: userName
-    })
-    .promise()
-  fs.writeFileSync(
-    join(process.cwd(), 'top_secret_credentials.txt'),
-    `AWS_ACCESS_KEY_ID=${AccessKey.AccessKeyId}\nAWS_SECRET_ACCESS_KEY=${AccessKey.SecretAccessKey}`
-  )
+  // const { AccessKey } = await new aws.IAM()
+  //   .createAccessKey({
+  //     UserName: userName
+  //   })
+  //   .promise()
+  // fs.writeFileSync(
+  //   join(process.cwd(), 'top_secret_credentials.txt'),
+  //   `AWS_ACCESS_KEY_ID=${AccessKey.AccessKeyId}\nAWS_SECRET_ACCESS_KEY=${AccessKey.SecretAccessKey}`
+  // )
   console.log()
   console.log(chalk.bold(`🍡 Access key for user "${userName}" created`))
   console.log(chalk.italic("You'll need them in a sec!"))
   console.log()
+
+  const { CertificateSummaryList } = await new aws.ACM({ region })
+    .listCertificates()
+    .promise()
+
+  if (
+    CertificateSummaryList.filter(
+      ({ DomainName }) => DomainName === `*.${hosted_zone}`
+    ).length
+  ) {
+    // if (
+    //   CertificateSummaryList.filter(
+    //     ({ DomainName }) => DomainName === `*.${hosted_zone}`
+    //   ).length
+    // ) {
+    console.log()
+    console.log(
+      chalk.bold('💨 Skipping ACM certificate creation (already exists)')
+    )
+    console.log()
+  } else {
+    const { CertificateArn } = await new aws.ACM({ region })
+      .requestCertificate({
+        DomainName: `*.${hosted_zone}`,
+        ValidationMethod: 'DNS'
+      })
+      .promise()
+
+    const { Certificate } = await new aws.ACM({ region })
+      .describeCertificate({
+        CertificateArn
+      })
+      .promise()
+
+    console.log(Certificate)
+
+    const { HostedZoneId } = await new aws.Route53()
+      .listHostedZonesByName({ DNSName: hosted_zone })
+      .promise()
+
+    await new aws.Route53()
+      .changeResourceRecordSets({
+        HostedZoneId,
+        ChangeBatch: {
+          Changes: [
+            {
+              Action: 'CREATE',
+              ResourceRecordSet: {
+                Name:
+                  Certificate.DomainValidationOptions[0].ResourceRecord.Name,
+                ResourceRecords: [
+                  {
+                    Value:
+                      Certificate.DomainValidationOptions[0].ResourceRecord
+                        .Value
+                  }
+                ],
+                Type:
+                  Certificate.DomainValidationOptions[0].ResourceRecord.Type,
+                TTL: 60
+              }
+            }
+          ]
+        }
+      })
+      .promise()
+    console.log(
+      chalk.bold(`🍡 ACM certificate and validation record on Route53 created`)
+    )
+    console.log()
+  }
   console.log('===========================')
   console.log()
 
