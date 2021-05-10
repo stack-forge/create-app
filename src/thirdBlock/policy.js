@@ -1,4 +1,4 @@
-export default function policy (bucketName, tableName, keyId) {
+export default function policy (policyName, bucketName, tableName, keyId) {
   return JSON.stringify({
     Version: '2012-10-17',
     Statement: [
@@ -18,14 +18,14 @@ export default function policy (bucketName, tableName, keyId) {
         Sid: '',
         Effect: 'Allow',
         Action: [
-          "iam:AttachUserPolicy",
-          "iam:ListAttachedUserPolicies",
-          "iam:DetachUserPolicy",
-          "iam:GetUser",
-          "iam:GetUserPolicy",
-          "iam:ListUserPolicies",
-          "iam:ListUserTags",
-          "iam:ListUsers"
+          'iam:AttachUserPolicy',
+          'iam:ListAttachedUserPolicies',
+          'iam:DetachUserPolicy',
+          'iam:GetUser',
+          'iam:GetUserPolicy',
+          'iam:ListUserPolicies',
+          'iam:ListUserTags',
+          'iam:ListUsers'
         ],
         Resource: 'arn:aws:iam::*:user/*'
       },
@@ -33,14 +33,14 @@ export default function policy (bucketName, tableName, keyId) {
         Sid: '',
         Effect: 'Allow',
         Action: [
-          "iam:CreatePolicy",
-          "iam:CreatePolicyVersion",
-          "iam:DeletePolicy",
-          "iam:DeletePolicyVersion",
-          "iam:GetPolicy",
-          "iam:GetPolicyVersion",
-          "iam:ListPolicies",
-          "iam:ListPolicyVersions"
+          'iam:CreatePolicy',
+          'iam:CreatePolicyVersion',
+          'iam:DeletePolicy',
+          'iam:DeletePolicyVersion',
+          'iam:GetPolicy',
+          'iam:GetPolicyVersion',
+          'iam:ListPolicies',
+          'iam:ListPolicyVersions'
         ],
         Resource: 'arn:aws:iam::*:policy/stackforge_*'
       },
@@ -55,6 +55,17 @@ export default function policy (bucketName, tableName, keyId) {
           'account:*'
         ],
         Resource: '*'
+      },
+      {
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Sid: 'DenyRemovingThisPolicy',
+            Effect: 'Deny',
+            NotAction: 'iam:DetachUserPolicy',
+            Resource: `arn:aws:iam::*:policy/${policyName}`
+          }
+        ]
       },
       ...(tableName
         ? [

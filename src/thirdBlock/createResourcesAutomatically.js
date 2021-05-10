@@ -85,7 +85,7 @@ export default async function createResourcesAutomatically (
   } = await new aws.IAM()
     .createPolicy({
       PolicyName: policyName,
-      PolicyDocument: policy(bucketName, createLockTable && tableName, keyId)
+      PolicyDocument: policy(policyName, bucketName, createLockTable && tableName, keyId)
     })
     .promise()
   console.log()
